@@ -1,0 +1,133 @@
+<h2><%=l(:label_project_plural)%></h2>
+
+<table class="list">
+	<thead>
+		<tr>
+			<th><%=l(:label_project)%></th>
+			<th><%=l(:field_description)%></th>
+		<% project = Project.find_by_identifier("one-hun-orgs") %>
+		<% project.custom_values.each do |custom_value| %>
+			<% if custom_value.custom_field.name != "URL" &&                 \
+			      custom_value.custom_field.name != "Species" &&             \
+			      custom_value.custom_field.name != "Data Type" &&           \
+			      custom_value.custom_field.name != "pubmed ID" &&           \
+			      custom_value.custom_field.name != "Main Contact Email" &&  \
+			      custom_value.custom_field.name != "Main Contact Name" &&  \
+ 			      !(custom_value.custom_field.name.include? "build")  &&  		\
+			      custom_value.custom_field.name != "Ready To Release"       %>
+			   		<th><%= custom_value.custom_field.name%></th>
+			<% end %>
+		<% end %>
+		</tr>
+	</thead>
+	<tbody>
+		<% ancestors = [] %>
+		<% for project in @projects %>
+			<% next if (project.identifier == "release-priorities" || project.name.include?('Template')) %>
+
+			<% rowid = "" %>
+			<% classes = "" %>
+			<% spanicon = "" %>
+			<% openonclick = "" %>
+			<% showchildren = false %>
+
+<%
+=begin %>
+	if this project has children, and there is one child project that is included in @projects (are not they all??), make showchildren = true
+	it seems whenever a project has children, showchildren will be true....
+<%
+=end %>
+			<% project.children.each do |child| %>
+			  <% if @projects.include?(child) %>
+			    <% showchildren = true %>
+			    <% break %>
+  			  <% end %>
+  			<% end %>
+
+<%
+=begin %>
+	if this project has children and showchildren is true (all cases??), make this class= closed parent, id=project_id-span
+	else (this project has no children), make it class = child
+<%
+=end %>
+			<% if(!project.children.empty? && showchildren) %>
+				<% classes += " closed parent " + cycle("odd", "even") %>
+				<% rowid = "id=\""+project.id.to_s+"span\"" %>
+				<% openonclick = "onclick=\"showHide('"+project.id.to_s+"','"+project.id.to_s+"span')\""%>
+				<% spanicon = "<span " + openonclick + " class=\"expander\">&nbsp  </span>" %>
+			<% else %>
+				<% classes += " child" %>
+			<% end %>
+
+
+<%
+=begin %>
+	if this is a root parent, add its project_id to ancestors (after clearing it)
+<%
+=end %>
+			<% if(project.parent_id == nil) %>
+				<% ancestors.clear %>
+				<% ancestors << project.id %>	
+			<% else %>
+<%
+=begin %>
+	if this is NOT a root parent,
+<%
+=end %>
+				<% while (ancestors.any? && !(project.parent_id == ancestors.last)) %>
+					<% ancestors.pop %>
+				<% end %>
+				<% classes += " hide" %>
+
+				<% if( !(ancestors.detect {|pid| pid == project.parent_id })) %>
+					<% prvclasses = "closed show parent " + cycle("odd", "even") %>
+					<% ancestors.each do |pid| %>
+						<% prvclasses += " " + pid.to_s %>
+					<% end %>
+					<% openonclick = "onclick=\"showHide('"+project.parent_id.to_s+"','"+project.parent_id.to_s+"span')\"" %>
+
+
+<%
+=begin %>
+					<tr class="<%= prvclasses %>" id="<%= project.parent_id.to_s + "span" %>" >
+						<td class="name" ><%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %><%="<span " + openonclick + " class=\"expander\" >&nbsp </span>" %><%= h("<Private Project>") %><span <%= openonclick %> class="empty">&nbsp</span></td>
+						<td <%= openonclick %> >Project is private. </td>
+					</tr>
+<%
+=end %>
+
+					<% ancestors << project.parent_id %>
+				<% end %>
+
+				<% ancestors.each do |pid| %>
+					<% classes += " " + pid.to_s %>
+				<% end %>
+				<% ancestors << project.id %>
+			<% end %> 
+
+			<tr class="<%= classes %>" <%= rowid %> >
+				<td class="name"><%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %><%= spanicon %><%= project.active? ? link_to(h(project.name), {:controller => 'projects', :action => 'show', :id => project}, :class => "project") : h(project.name) %></td>
+			<td <%= openonclick %> ><%= textilizable project.short_description.gsub(/\!.+\!/,""), :project => project %></td>
+		<% project.custom_values.each do |custom_value| %>
+			<% if custom_value.custom_field.name != "URL" &&                 \
+			      custom_value.custom_field.name != "Species" &&             \
+			      custom_value.custom_field.name != "Data Type" &&           \
+			      custom_value.custom_field.name != "pubmed ID" &&           \
+			      custom_value.custom_field.name != "Main Contact Email" &&  \
+			      custom_value.custom_field.name != "Main Contact Name" &&  \
+ 			      !(custom_value.custom_field.name.include? "build") &&  		\
+			      custom_value.custom_field.name != "Ready To Release"       %>
+	   				<td><%= custom_value.value.to_s %></td>
+			<% end %>
+		<% end %>
+			</tr>
+		<% end %>
+	</tbody>
+</table>
+
+
+<% other_formats_links do |f| %>
+	<%= f.link_to 'Atom', :url => {:key => User.current.rss_key} %>
+<% end %>
+
+<% html_title(l(:label_project_plural)) -%>
