@@ -9,8 +9,10 @@
     <%= link_to l(:label_overall_activity), { :controller => 'activities', :action => 'index' }%>
 </div>
 
-<h2><%=l(:label_project_plural)%></h2>
-
+<h2 style="margin-bottom:0"><%=l(:label_project_plural)%></h2>
+<i style="font-size:80%">(click on description to open/close the project tree)</i>
+<br>
+   
 <table class="list">
 	<thead>
 		<tr>
@@ -36,7 +38,7 @@
 			<% if(!project.children.empty? && showchildren) %>
 				<% classes += " closed parent " + cycle("odd", "even") %>
 				<% rowid = "id=\""+project.id.to_s+"span\"" %>
-				<% openonclick = "onclick=\"showHide('"+project.id.to_s+"','"+project.id.to_s+"span')\""%>
+				<% openonclick = "style=\"cursor:pointer\"  onclick=\"showHide('"+project.id.to_s+"','"+project.id.to_s+"span')\""%>
 				<% spanicon = "<span " + openonclick + " class=\"expander\">&nbsp  </span>" %>
 			<% else %>
 				<% classes += " child" %>
@@ -54,20 +56,15 @@
 					<% ancestors.each do |pid| %>
 						<% prvclasses += " " + pid.to_s %>
 					<% end %>
-					<% openonclick = "onclick=\"showHide('"+project.parent_id.to_s+"','"+project.parent_id.to_s+"span')\"" %>
+					<% openonclick = "style=\"cursor:pointer\" onclick=\"showHide('"+project.parent_id.to_s+"','"+project.parent_id.to_s+"span')\"" %>
 
-<%
-=begin %>
-
+<!-- 
 					<tr class="<%= prvclasses %>" id="<%= project.parent_id.to_s + "span" %>" >
 						<td class="name" ><%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %><%="<span " + openonclick + " class=\"expander\" >&nbsp </span>" %><%= h("<Private Project>") %><span <%= openonclick %> class="empty">&nbsp</span></td>
 						<td <%= openonclick %> >Project is private. </td>
 						</span>
 					</tr>
-<%
-=end %>
-
-
+-->
 
 					<% ancestors << project.parent_id %>
 				<% end %>
