@@ -1,3 +1,6 @@
+0.0.4-1 (2011-02-17)
+    * EuPathDB fork of 0.0.4
+    * added a Priorities tab for detailed project view
 0.0.4 (2010-06-23):
     * Sync with Redmine 0.9.4
     * Added plugin functionality to admin/projects page
