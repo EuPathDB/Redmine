@@ -18,5 +18,5 @@ tr.hide {display:none; }
 
 table.priorities tbody td, table.priorities thead th, table.priorities tbody tr td {
 	border-right: 1px solid #DDDDDD;
-
+	white-space:normal;
 }
