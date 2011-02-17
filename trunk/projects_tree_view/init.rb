@@ -8,10 +8,10 @@ Dispatcher.to_prepare do
 end
 
 Redmine::Plugin.register :projects_tree_view do
-  name 'Projects Tree View plugin'
-  author 'Chris Peterson'
-  description 'This is a Redmine plugin which will turn the projects page into a tree view'
-  version '0.0.4'
+  name 'Projects Tree and Priorities View plugin'
+  author 'Chris Peterson - EuPathDB'
+  description 'This is a Redmine plugin which will turn the projects page into a tree view; it also adds a tab called Priorities for a more detailed project view'
+  version '0.0.4-1'
 
   menu :top_menu, :projectspis, { :controller => 'projectspis', :action => 'index' }, :caption => 'Priorities'
 end

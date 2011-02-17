@@ -9,6 +9,7 @@
 			<th><%=l(:label_project)%></th>
 			<th><%=l(:field_description)%></th>
 			<th>First added</th>   <!-- value from attribute created_on -->
+			<th>Last update</th>   <!-- value from attribute updated_on -->
 		<% project = Project.find_by_identifier("one-hun-orgs") %>
 		<% project.custom_values.each do |custom_value| %>
 			<% if custom_value.custom_field.name != "URL" &&                 \
@@ -100,12 +101,23 @@ if this is NOT a root parent,
 			<% end %> 
 
 		<tr class="<%= classes %>" <%= rowid %> >
-			<td class="name"><%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %><%= spanicon %><%= project.active? ? link_to(h(project.name), {:controller => 'projects', :action => 'show', :id => project}, :class => "project") : h(project.name) %></td>
-
-			<td <%= openonclick %> ><%= textilizable project.short_description.gsub(/\!.+\!/,""), :project => project %></td>
+			<td class="name">
+				<%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %>
+				<%= spanicon %>
+				<%= project.active? ? link_to(h(project.name), {:controller => 'projects', 
+										:action => 'show', :id => project}, 
+										:class => "project") : h(project.name) 
+				%>
+			</td>
+			<td <%= openonclick %> >
+				<%= textilizable project.short_description.gsub(/\!.+\!/,""), :project => project %>
+			</td>
 			<% created = project.created_on.to_s %>
 			<% created[0..3]=""; created[7..20] = "" %> <!-- simpler date -->
+			<% updated = project.updated_on.to_s %>
+			<% updated[0..3]=""; updated[7..20] = "" %> <!-- simpler date -->
 			<td <%= openonclick %> ><%= created %></td>
+			<td <%= openonclick %> ><%= updated %></td>
 
 		<% project.custom_values.each do |custom_value| %>
 			<% if custom_value.custom_field.name != "URL" &&                 \
