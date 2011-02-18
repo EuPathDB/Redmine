@@ -1,32 +1,36 @@
-<h2><%=l(:label_project_plural)%></h2>
+<!-- TO DO: move style to css file -->
 
-
-<table class="list">
+<h2 style="margin-bottom:0">Development and Infrastructure Priorities</h2>
+<i style="font-size:80%">(click on description to open/close the project tree)</i>
+<br>
+<table class="list priorities">
 	<thead>
 		<tr>
-			<th style="width:120px"><%=l(:label_project)%></th>
-			<th style="width:300px"><%=l(:field_description)%></th>
+			<th><%=l(:label_project)%></th>
+			<th><%=l(:field_description)%></th>
+			<th>First added</th>   <!-- value from attribute created_on -->
+			<th>Last update</th>   <!-- value from attribute updated_on -->
 		<% project = Project.find_by_identifier("one-hun-orgs") %>
-		<% project.custom_values.each do |custom_value| %
+		<% project.custom_values.each do |custom_value| %>
 			<% if custom_value.custom_field.name != "URL" &&                 \
 			      custom_value.custom_field.name != "Species" &&             \
 			      custom_value.custom_field.name != "Data Type" &&           \
 			      custom_value.custom_field.name != "pubmed ID" &&           \
 			      custom_value.custom_field.name != "Main Contact Email" &&  \
 			      custom_value.custom_field.name != "Main Contact Name" &&  \
-			      custom_value.custom_field.name !~ "Build" &&  		\
+ 			      !(custom_value.custom_field.name.include? "build")  &&  		\
 			      custom_value.custom_field.name != "Ready To Release"       %>
-
-			   		<th style="width:65px"><%= custom_value.custom_field.name%></th>
-
+			   		<th style="white-space:normal"><%= custom_value.custom_field.name%></th>
 			<% end %>
 		<% end %>
 		</tr>
 	</thead>
 	<tbody>
-	<% ancestors = [] %>
-	<% for project in @projects %>
-			<% next if (project.identifier == "release-priorities" || project.name.include?('Template')) %>
+		<% ancestors = [] %>
+		<% for project in @projects %>
+			<!-- to set values for custom fields that were added after project creation -->
+			<% project.save %>  
+			<% next if (project.identifier != "release-priorities" || project.name.include?('Template')) %>
 
 			<% rowid = "" %>
 			<% classes = "" %>
@@ -34,12 +38,9 @@
 			<% openonclick = "" %>
 			<% showchildren = false %>
 
-<%
-=begin %>
-	if this project has children, and there is one child project that is included in @projects (are not they all??), make showchildren = true
-	it seems whenever a project has children, showchildren will be true....
-<%
-=end %>
+<!--
+if this project has children, and there is one child project that is included in @projects (are not they all??), make showchildren = true ---- it seems whenever a project has children, showchildren will be true....
+-->
 			<% project.children.each do |child| %>
 			  <% if @projects.include?(child) %>
 			    <% showchildren = true %>
@@ -47,36 +48,30 @@
   			  <% end %>
   			<% end %>
 
-<%
-=begin %>
-	if this project has children and showchildren is true (all cases??), make this class= closed parent, id=project_id-span
-	else (this project has no children), make it class = child
-<%
-=end %>
+<!--
+if this project has children and showchildren is true (all cases??), make this class= closed parent, id=project_id-span
+else (this project has no children), make it class = child
+-->
 			<% if(!project.children.empty? && showchildren) %>
 				<% classes += " closed parent " + cycle("odd", "even") %>
 				<% rowid = "id=\""+project.id.to_s+"span\"" %>
-				<% openonclick = "onclick=\"showHide('"+project.id.to_s+"','"+project.id.to_s+"span')\""%>
+				<% openonclick = "style=\"cursor:pointer\" onclick=\"showHide('"+project.id.to_s+"','"+project.id.to_s+"span')\""%>
 				<% spanicon = "<span " + openonclick + " class=\"expander\">&nbsp  </span>" %>
 			<% else %>
 				<% classes += " child" %>
 			<% end %>
 
 
-<%
-=begin %>
-	if this is a root parent, add its project_id to ancestors (after clearing it)
-<%
-=end %>
+<!--
+if this is a root parent, add its project_id to ancestors (after clearing it)
+-->
 			<% if(project.parent_id == nil) %>
 				<% ancestors.clear %>
 				<% ancestors << project.id %>	
 			<% else %>
-<%
-=begin %>
-	if this is NOT a root parent,
-<%
-=end %>
+<!--
+if this is NOT a root parent,
+-->
 				<% while (ancestors.any? && !(project.parent_id == ancestors.last)) %>
 					<% ancestors.pop %>
 				<% end %>
@@ -87,17 +82,14 @@
 					<% ancestors.each do |pid| %>
 						<% prvclasses += " " + pid.to_s %>
 					<% end %>
-					<% openonclick = "onclick=\"showHide('"+project.parent_id.to_s+"','"+project.parent_id.to_s+"span')\"" %>
+					<% openonclick = "style=\"cursor:pointer\" onclick=\"showHide('"+project.parent_id.to_s+"','"+project.parent_id.to_s+"span')\"" %>
 
-
-<%
-=begin %>
+<!--
 					<tr class="<%= prvclasses %>" id="<%= project.parent_id.to_s + "span" %>" >
 						<td class="name" ><%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %><%="<span " + openonclick + " class=\"expander\" >&nbsp </span>" %><%= h("<Private Project>") %><span <%= openonclick %> class="empty">&nbsp</span></td>
 						<td <%= openonclick %> >Project is private. </td>
 					</tr>
-<%
-=end %>
+-->
 
 					<% ancestors << project.parent_id %>
 				<% end %>
@@ -108,25 +100,39 @@
 				<% ancestors << project.id %>
 			<% end %> 
 
-			<tr class="<%= classes %>" <%= rowid %> >
-				<td class="name"><%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %><%= spanicon %><%= project.active? ? link_to(h(project.name), {:controller => 'projects', :action => 'show', :id => project}, :class => "project") : h(project.name) %></td>
-			<td <%= openonclick %> ><%= textilizable project.short_description.gsub(/\!.+\!/,""), :project => project %></td>
+		<tr class="<%= classes %>" <%= rowid %> >
+			<td class="name">
+				<%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %>
+				<%= spanicon %>
+				<%= project.active? ? link_to(h(project.name), {:controller => 'projects', 
+										:action => 'show', :id => project}, 
+										:class => "project") : h(project.name) 
+				%>
+			</td>
+			<td <%= openonclick %> >
+				<%= textilizable project.short_description.gsub(/\!.+\!/,""), :project => project %>
+			</td>
+			<% created = project.created_on.to_s %>
+			<% created[0..3]=""; created[7..20] = "" %> <!-- simpler date -->
+			<% updated = project.updated_on.to_s %>
+			<% updated[0..3]=""; updated[7..20] = "" %> <!-- simpler date -->
+			<td <%= openonclick %> ><%= created %></td>
+			<td <%= openonclick %> ><%= updated %></td>
+
 		<% project.custom_values.each do |custom_value| %>
 			<% if custom_value.custom_field.name != "URL" &&                 \
 			      custom_value.custom_field.name != "Species" &&             \
 			      custom_value.custom_field.name != "Data Type" &&           \
 			      custom_value.custom_field.name != "pubmed ID" &&           \
 			      custom_value.custom_field.name != "Main Contact Email" &&  \
-			      custom_value.custom_field.name != "Main Contact Name" &&   \
-			      custom_value.custom_field.name !~ "Build" && 		 \
+			      custom_value.custom_field.name != "Main Contact Name" &&  \
+ 			      !(custom_value.custom_field.name.include? "build") &&  		\
 			      custom_value.custom_field.name != "Ready To Release"       %>
-
-	   				<td><%= custom_value.value.to_s %></td>
-
+	   				<td  <%= openonclick %>><%= custom_value.value.to_s %></td>
 			<% end %>
 		<% end %>
-			</tr>
-	<% end %>
+		</tr>
+		<% end %>
 	</tbody>
 </table>
 
