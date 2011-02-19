@@ -18,7 +18,6 @@
 			      custom_value.custom_field.name != "pubmed ID" &&           \
 			      custom_value.custom_field.name != "Main Contact Email" &&  \
 			      custom_value.custom_field.name != "Main Contact Name" &&  \
- 			      !(custom_value.custom_field.name.include? "build")  &&  		\
 			      custom_value.custom_field.name != "Ready To Release"       %>
 			   		<th style="white-space:normal"><%= custom_value.custom_field.name%></th>
 			<% end %>
@@ -76,7 +75,7 @@ if this is NOT a root parent,
 					<% ancestors.pop %>
 				<% end %>
 				<% classes += " hide" %>
-
+<!--
 				<% if( !(ancestors.detect {|pid| pid == project.parent_id })) %>
 					<% prvclasses = "closed show parent " + cycle("odd", "even") %>
 					<% ancestors.each do |pid| %>
@@ -84,15 +83,16 @@ if this is NOT a root parent,
 					<% end %>
 					<% openonclick = "style=\"cursor:pointer\" onclick=\"showHide('"+project.parent_id.to_s+"','"+project.parent_id.to_s+"span')\"" %>
 
-<!--
+
 					<tr class="<%= prvclasses %>" id="<%= project.parent_id.to_s + "span" %>" >
 						<td class="name" ><%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %><%="<span " + openonclick + " class=\"expander\" >&nbsp </span>" %><%= h("<Private Project>") %><span <%= openonclick %> class="empty">&nbsp</span></td>
 						<td <%= openonclick %> >Project is private. </td>
 					</tr>
--->
+
 
 					<% ancestors << project.parent_id %>
 				<% end %>
+-->
 
 				<% ancestors.each do |pid| %>
 					<% classes += " " + pid.to_s %>
@@ -126,7 +126,6 @@ if this is NOT a root parent,
 			      custom_value.custom_field.name != "pubmed ID" &&           \
 			      custom_value.custom_field.name != "Main Contact Email" &&  \
 			      custom_value.custom_field.name != "Main Contact Name" &&  \
- 			      !(custom_value.custom_field.name.include? "build") &&  		\
 			      custom_value.custom_field.name != "Ready To Release"       %>
 	   				<td  <%= openonclick %>><%= custom_value.value.to_s %></td>
 			<% end %>

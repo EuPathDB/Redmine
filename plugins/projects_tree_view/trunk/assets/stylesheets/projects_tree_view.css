@@ -12,7 +12,7 @@ span.empty { text-align:right;
 		cursor: pointer;}
 tr.parent.open span.expander {background-image: url(../images/bullet_toggle_minus.png); 
 				cursor: pointer;}
-tr.parent.open {background-color:#ffffbb;}
+
 tr.hide {display:none; }
 
 
@@ -20,3 +20,17 @@ table.priorities tbody td, table.priorities thead th, table.priorities tbody tr 
 	border-right: 1px solid #DDDDDD;
 	white-space:normal;
 }
+
+
+table.priorities tbody tr.odd:hover{
+	background-color: #F6F7F8;
+}
+table.priorities tbody tr.even:hover{
+	background-color: white;
+}
+
+tr.parent.open {background-color:#ffffbb;}
+
+tr.parent.open.odd:hover {background-color:#ffffbb;}
+
+tr.parent.open.even:hover {background-color:#ffffbb;}
