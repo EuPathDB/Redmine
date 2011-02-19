@@ -1,0 +1,36 @@
+tr.parent { border: 1px solid #f8f8f8;}
+tr.child  { border: 1px solid #f8f8f8; }
+tr.child  td.name { padding-left: 17px;}
+
+
+tr.parent span.expander {background-image: url(../images/bullet_toggle_plus.png); 
+			padding-left: 8px; 
+			margin-left: 0; 
+			cursor: pointer;}
+span.empty { text-align:right; 
+		width: 100%; 
+		cursor: pointer;}
+tr.parent.open span.expander {background-image: url(../images/bullet_toggle_minus.png); 
+				cursor: pointer;}
+
+tr.hide {display:none; }
+
+
+table.priorities tbody td, table.priorities thead th, table.priorities tbody tr td {
+	border-right: 1px solid #DDDDDD;
+	white-space:normal;
+}
+
+
+table.priorities tbody tr.odd:hover{
+	background-color: #F6F7F8;
+}
+table.priorities tbody tr.even:hover{
+	background-color: white;
+}
+
+tr.parent.open {background-color:#ffffbb;}
+
+tr.parent.open.odd:hover {background-color:#ffffbb;}
+
+tr.parent.open.even:hover {background-color:#ffffbb;}

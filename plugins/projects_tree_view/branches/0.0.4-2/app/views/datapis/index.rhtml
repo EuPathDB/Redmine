@@ -1,0 +1,159 @@
+<!-- TO DO: move style to css file -->
+
+<h2 style="margin-bottom:0">Data Release Priorities</h2>
+<i style="font-size:80%">(click on description to open/close the project tree)</i>
+<br>
+<table class="list priorities">
+	<thead>
+		<tr>
+			<th><%=l(:label_project)%></th>
+			<th><%=l(:field_description)%></th>
+			<th>First added</th>   <!-- value from attribute created_on -->
+			<th>Last update</th>   <!-- value from attribute updated_on -->
+		<% project = Project.find_by_identifier("one-hun-orgs") %>
+		<% project.custom_values.each do |custom_value| %>
+			<% if custom_value.custom_field.name != "Work completed" &&      \
+               		      custom_value.custom_field.name != "URL" &&             \
+               		      custom_value.custom_field.name != "Species" &&             \
+			      custom_value.custom_field.name != "Component" &&             \
+			      custom_value.custom_field.name != "People" &&             \
+			      custom_value.custom_field.name != "Main Contact Email" %>
+			   		<th style="white-space:normal"><%= custom_value.custom_field.name%></th>
+			<% end %>
+		<% end %>
+		</tr>
+	</thead>
+	<tbody>
+		<% ancestors = [] %>
+		<% for project in @projects %>
+			<!-- to set values for custom fields that were added after project creation -->
+			<% project.save %>  
+			<% next if ( project.name.include?('Template')  ) %>
+
+			<% rowid = "" %>
+			<% classes = "" %>
+			<% spanicon = "" %>
+			<% openonclick = "" %>
+			<% showchildren = false %>
+
+<!--
+if this project has children, and there is one child project that is included in @projects (are not they all??), make showchildren = true ---- it seems whenever a project has children, showchildren will be true....
+-->
+			<% project.children.each do |child| %>
+			  <% if @projects.include?(child) %>
+			    <% showchildren = true %>
+			    <% break %>
+  			  <% end %>
+  			<% end %>
+
+<!--
+if this project has children and showchildren is true (all cases??), make this class= closed parent, id=project_id-span
+else (this project has no children), make it class = child
+-->
+			<% if(!project.children.empty? && showchildren) %>
+				<% classes += " closed parent " + cycle("odd", "even") %>
+				<% rowid = "id=\""+project.id.to_s+"span\"" %>
+				<% openonclick = "style=\"cursor:pointer\" onclick=\"showHide('"+project.id.to_s+"','"+project.id.to_s+"span')\""%>
+				<% spanicon = "<span " + openonclick + " class=\"expander\">&nbsp  </span>" %>
+			<% else %>
+				<% classes += " child" %>
+			<% end %>
+
+
+<!--
+if this is a root parent, add its project_id to ancestors (after clearing it)
+-->
+			<% if(project.parent_id == nil) %>
+				<% ancestors.clear %>
+				<% ancestors << project.id %>	
+			<% else %>
+<!--
+if this is NOT a root parent, remove other branches in ancestors, go back to parent_id,  also add class hide
+-->
+				<% while (ancestors.any? && !(project.parent_id == ancestors.last)) %>
+					<% ancestors.pop %>
+				<% end %>
+<!--
+if this is a project first level, show it (we wont show the root)
+-->
+				<% if ancestors.length > 1 %>
+					<% classes += " hide" %>
+				<% end %>
+
+
+<!-- ++++++++++++++ UNUSED
+				<% if( !(ancestors.detect {|pid| pid == project.parent_id })) %>
+					<% prvclasses = "closed show parent " + cycle("odd", "even") %>
+					<% ancestors.each do |pid| %>
+						<% prvclasses += " " + pid.to_s %>
+					<% end %>
+					<% openonclick = "style=\"cursor:pointer\" onclick=\"showHide('"+project.parent_id.to_s+"','"+project.parent_id.to_s+"span')\"" %>
+
+
+					<tr class="<%= prvclasses %>" id="<%= project.parent_id.to_s + "span" %>" >
+						<td class="name" ><%= "<span style=\"padding-left: " + (2*(ancestors.length-1)).to_s + "em;\"></span>" %><%="<span " + openonclick + " class=\"expander\" >&nbsp </span>" %><%= h("<Private Project>") %><span <%= openonclick %> class="empty">&nbsp</span></td>
+						<td <%= openonclick %> >Project is private. </td>
+					</tr>
+
+
+					<% ancestors << project.parent_id %>
+				<% end %>
+++++++++++++++++++++ -->
+
+
+<!--
+add all ancestors ids to class, then add this project id to ancestors
+-->
+				<% ancestors.each do |pid| %>
+					<% classes += " " + pid.to_s %>
+				<% end %>
+				<% ancestors << project.id %>
+			<% end %> 
+
+<!--
+print only data projects (with root 31); do not print the root
+-->
+			<% if( ancestors.detect {|pid| pid == 31} && project.id != 31 ) %>
+
+		<tr class="<%= classes %>" <%= rowid %> >
+			<td width="170px" class="name">
+				<%= "<span style=\"padding-left: " + (1*(ancestors.length-1)).to_s + "em;\"></span>" %>
+				<%= spanicon %>
+				<%= project.active? ? link_to(h(project.name), {:controller => 'projects', 
+										:action => 'show', :id => project}, 
+										:class => "project") : h(project.name) 
+				%>
+			</td>
+			<td <%= openonclick %> >
+				<%= textilizable project.short_description.gsub(/\!.+\!/,""), :project => project %>
+			</td>
+			<% created = project.created_on.to_s %>
+			<% created[0..3]=""; created[7..20] = "" %> <!-- simpler date -->
+			<% updated = project.updated_on.to_s %>
+			<% updated[0..3]=""; updated[7..20] = "" %> <!-- simpler date -->
+			<td <%= openonclick %> ><%= created %></td>
+			<td <%= openonclick %> ><%= updated %></td>
+
+		<% project.custom_values.each do |custom_value| %>
+			<% if custom_value.custom_field.name != "Work completed" &&      \
+               		      custom_value.custom_field.name != "URL" &&             \
+  			      custom_value.custom_field.name != "Species" &&             \
+			      custom_value.custom_field.name != "Component" &&             \
+			      custom_value.custom_field.name != "People" &&             \
+			      custom_value.custom_field.name != "Main Contact Email" %>
+	   				<td  <%= openonclick %>><%= custom_value.value.to_s %></td>
+			<% end %>
+		<% end %>
+		</tr>
+			<% end %>  <!--  if ancestors includes 31 (data)but it is not 31 -->
+
+		<% end %>  <!-- project loop -->
+	</tbody>
+</table>
+
+
+<% other_formats_links do |f| %>
+	<%= f.link_to 'Atom', :url => {:key => User.current.rss_key} %>
+<% end %>
+
+<% html_title(l(:label_project_plural)) -%>
