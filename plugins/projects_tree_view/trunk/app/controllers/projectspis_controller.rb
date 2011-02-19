@@ -45,6 +45,9 @@ class ProjectspisController < ApplicationController
   helper :repositories
   include RepositoriesHelper
   include ProjectsHelper
+
+  helper :projectspis
+  include ProjectspisHelper
   
   # Lists visible projects
   def index
@@ -55,6 +58,11 @@ class ProjectspisController < ApplicationController
       format.xml  {
         @projects = Project.visible.find(:all, :order => 'lft')
       }
+     format.csv  { 
+	@projects = Project.visible.find(:all, :order => 'lft')
+	send_data(projects_to_csv(@projects), :type => 'text/csv; header=present', 
+						:filename => 'export.csv') 
+	}
       format.atom {
         projects = Project.visible.find(:all, :order => 'created_on DESC',
                                               :limit => Setting.feeds_limit.to_i)

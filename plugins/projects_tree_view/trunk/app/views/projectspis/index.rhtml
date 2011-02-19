@@ -138,6 +138,7 @@ if this is NOT a root parent,
 
 <% other_formats_links do |f| %>
 	<%= f.link_to 'Atom', :url => {:key => User.current.rss_key} %>
+	<%= f.link_to 'CSV', :url => { } %>
 <% end %>
 
 <% html_title(l(:label_project_plural)) -%>
