@@ -1,3 +1,28 @@
-= eu_path_db
+= eupathdb_average_priorities
 
-Description goes here
+This plugin alters each instance of Issue, and the Issue class,
+in the following ways:
+
+1. It adds a method `average_priority` to each instance of Issue. This method
+will calculate the average of each individual PI priority field, and set the
+field PIs to that value.
+
+2. It adds the above method to the Issue class definition's `before_save` hook.
+This causes every instance of Issue to call `average_priority` everytime it is
+saved.
+
+
+Additionally, this plugin includes a script `db/script/update-priorities.sql`.
+This script is meant to be run _one time_! The script addresses the fact that
+the EuPathDB instance of redmine already includes the average PIs value for
+several issues, but it does not include the individual PI values. What this
+means is that if a PI sets a priority for one of these issues, the PIs value
+will become inaccurate since the calculated average will not include the other
+PI priority values.
+
+The script will do the following for each issue with a value for PIs:
+
+1. It will map the values of the PIs field to a value which is valid for an
+indivual PI field.
+
+2. It will set each individual PI field to the newly mapped PIs field value.

@@ -8,12 +8,12 @@ Dispatcher.to_prepare :redmine_eupathdb do
 	end
 end
 
-RAILS_DEFAULT_LOGGER.info 'Starting EuPathDB plugin'
+RAILS_DEFAULT_LOGGER.info 'Starting Redmine Eupathdb Average Priorities plugin'
 
-Redmine::Plugin.register :redmine_eupathdb do
-  name 'Redmine EuPathDB plugin'
+Redmine::Plugin.register :redmine_eupathdb_average_priorities do
+  name 'Redmine Eupathdb Average Priorities plugin'
   author 'EuPathDB'
-  description 'This is a plugin for Redmine that adds functionality specific to the EuPathDB Redmine Instance'
+  description 'This is a plugin for Redmine that adds the capability to average PI priorities'
   version '0.0.1'
   url 'http://eupathdb.org'
   author_url 'http://eupathdb.org'
