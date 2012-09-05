@@ -1,3 +1,6 @@
+select "this script is disabled";
+exit
+
 /*
 This is a script that is meant to be run one time only. The purpose of the script
 is to set individual PI values to the value of PIs, for any issues with a value
