@@ -1,0 +1,23 @@
+= eupathdb_view_customizations
+
+This plugin customizes some Redmine views based on requests from PIs and managers.
+
+
+== Updated files
+
+[views/projects/index.rhtml]
+  This overrides the project page view shipped with the plugin `project_tree_view`.
+  It removed the "Go to modules" and "Versions" columns.
+
+[views/projects/show.html.erb]
+  This overrides the default project item view. It lists subprojects as an
+  unordered list, rather than as a comma-separated list.
+
+
+== Important
+
+In `config/environment.rb`, add the following 2 lines in the Initializer config block:
+
+  # Specify plugin priority (plugins in front take priority)
+  config.plugins = [ :redmine_eupathdb_view_customizations, :all ]
+
