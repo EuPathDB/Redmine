@@ -26,11 +26,11 @@ module RedmineEupathdb
       # bail if our custom fields aren't available
       return unless ['JK', 'CS', 'DR', 'PIs'].all? {|pi| self.available_custom_fields.any? {|cf| cf.name == pi}}
 
-      RAILS_DEFAULT_LOGGER.info 'getting PI priority fields'
+      ::Rails.logger.info 'getting PI priority fields'
 
       # get PIs custom_field object <IssueCustomField>
       cf_pis = self.available_custom_fields.find {|cf| cf.name == 'PIs'}
-      RAILS_DEFAULT_LOGGER.info cf_pis.default_value
+      ::Rails.logger.info cf_pis.default_value
       # custom fields to average
       cf_field_names = ['JK', 'CS', 'DR']
       pi_vals = []
@@ -38,7 +38,7 @@ module RedmineEupathdb
         cf_field = self.available_custom_fields.find {|cf| cf.name == cf_field_name }
         cf_value = self.custom_field_values.find {|cf| cf.custom_field_id == cf_field.id}.value.to_f
         cf = self.custom_field_values.find {|cf| cf.custom_field_id == cf_field.id}
-        RAILS_DEFAULT_LOGGER.info "found #{cf_field.name} with value #{cf_value}, #{cf.class}" if cf_value > 0
+        ::Rails.logger.info "found #{cf_field.name} with value #{cf_value}, #{cf.class}" if cf_value > 0
         pi_vals << cf_value.to_f if cf_value > 0
       end
       # set average to PIs

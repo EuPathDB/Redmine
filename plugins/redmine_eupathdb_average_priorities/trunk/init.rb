@@ -1,14 +1,13 @@
 require 'redmine'
-require 'dispatcher'
 
-Dispatcher.to_prepare :redmine_eupathdb do
+Rails.configuration.to_prepare do
 	require_dependency 'issue' 
 	unless Issue.included_modules.include? RedmineEupathdb::IssuePatch
 		Issue.send(:include, RedmineEupathdb::IssuePatch)
 	end
 end
 
-RAILS_DEFAULT_LOGGER.info 'Starting Redmine Eupathdb Average Priorities plugin'
+::Rails.logger.info 'Starting Redmine Eupathdb Average Priorities plugin'
 
 Redmine::Plugin.register :redmine_eupathdb_average_priorities do
   name 'Redmine Eupathdb Average Priorities plugin'
