@@ -5,6 +5,6 @@ Redmine::Plugin.register :redmine_eupathdb_view_customizations do
   author 'EuPathDB'
   description 'This plugin customizes views in Redmine'
   version '0.0.1'
-  url 'http://eupathdb.org'
+  url '$$URL$$'
   author_url 'http://eupathdb.org'
 end
