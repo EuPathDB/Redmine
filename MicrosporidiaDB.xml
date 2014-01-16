@@ -375,7 +375,7 @@ Troemel et al. isolation of four Nematocida strains (ERTm1, ERTm2, ERTm3, ERTm4)
     <protocol></protocol>
     <caveat></caveat>
     <acknowledgement></acknowledgement>
-    <releasePolicy><![CDATA[Note: In the latest version of this genome the IDs of 138 genes on chromosome 5 were inadevertantly reused making it impossible to create a clean mapping.  <a href="http://microsporidiadb.org/micro/communityDownload.do?fname=ehelem_reused_IDs.xlsx">Click here for the list of these IDs.</a>]]></releasePolicy>
+    <releasePolicy><![CDATA[Note: In the latest version of this genome the IDs of 138 genes on chromosome 5 were inadevertantly reused making it impossible to create a clean mapping.  <a href="http://microsporidiadb.org/micro/communityDownload.do?fname=ehelem_reused_IDs.xlsx">Click here for the list of these IDs.</a>]]</releasePolicy>
     <primaryContactId>patrick.keeling</primaryContactId>
     <link>
       <text>Bioproject home page at GenBank</text>
