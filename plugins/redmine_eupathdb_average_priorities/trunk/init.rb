@@ -16,4 +16,5 @@ Redmine::Plugin.register :redmine_eupathdb_average_priorities do
   version '0.0.1'
   url 'http://eupathdb.org'
   author_url 'http://eupathdb.org'
+  menu :top_menu, :issues, "/issues", :caption => :label_issue_plural
 end
